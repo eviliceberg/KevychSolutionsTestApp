@@ -39,7 +39,7 @@ final class ForecastManager {
     }
     
     func getForecast() {
-        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast/daily?lat=\(latitude)&lon=\(longitude)&cnt=16&units=metric&appid=") else { return }
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast/daily?lat=\(latitude)&lon=\(longitude)&cnt=16&units=metric&appid=\(AppConstants.weatherAPIKey)") else { return }
         
         NetworkingManager.download(url: url)
             .decode(type: Forecast.self, decoder: JSONDecoder())
@@ -51,7 +51,7 @@ final class ForecastManager {
     }
     
     func getForecastForCity(cityName: String) {
-        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast/daily?q=\(cityName)&cnt=16&units=metric&appid=") else { return }
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast/daily?q=\(cityName)&cnt=16&units=metric&appid=\(AppConstants.weatherAPIKey)") else { return }
         
         NetworkingManager.download(url: url)
             .decode(type: Forecast.self, decoder: JSONDecoder())
