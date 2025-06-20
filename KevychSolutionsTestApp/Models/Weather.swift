@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct Forecast: Codable {
+struct Forecast: Codable, Hashable {
     let city: City
     let cod: String
     let message: Double
@@ -17,7 +17,7 @@ struct Forecast: Codable {
 }
 
 // MARK: - City
-struct City: Codable {
+struct City: Codable, Hashable {
     let id: Int
     let name: String
     let coord: Coord
@@ -26,7 +26,7 @@ struct City: Codable {
 }
 
 // MARK: - Coord
-struct Coord: Codable {
+struct Coord: Codable, Hashable {
     let lon, lat: Double
 }
 
@@ -51,7 +51,8 @@ struct DaysList: Codable, Hashable {
     }
     
     var isDay: Bool {
-        dt >= sunrise && dt < sunset
+        let currentLocalTime = Int(Date().timeIntervalSince1970)
+        return currentLocalTime >= sunrise && currentLocalTime < sunset
     }
     
 }
@@ -82,11 +83,11 @@ enum Main: String, Codable {
     func imageName(isDay: Bool) -> String {
         switch self {
         case .clear:
-            isDay ? "sun.max.fill" : "moon.fill"
+            "sun.max.fill"
         case .clouds:
-            isDay ? "cloud.sun.fill" : "cloud.moon.fill"
+            "cloud.sun.fill"
         case .rain:
-            isDay ? "cloud.sun.rain.fill" : "cloud.moon.rain.fill"
+            "cloud.sun.rain.fill"
         }
     }
     

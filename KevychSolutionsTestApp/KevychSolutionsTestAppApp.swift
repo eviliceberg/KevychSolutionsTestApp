@@ -11,7 +11,7 @@ import SwiftUI
 struct KevychSolutionsTestAppApp: App {
     var body: some Scene {
         WindowGroup {
-            MainView()
+            RootView()
         }
     }
 }
