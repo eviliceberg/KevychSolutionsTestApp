@@ -11,15 +11,31 @@ import CoreLocation
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
     
-    @Published var latitude: Double = 0.0
-    @Published var longitude: Double = 0.0
+    @Published var latitude: Double? = nil
+    @Published var longitude: Double? = nil
+    
+    @Published var showAlert: Bool? = false
 
     override init() {
         super.init()
+        authorizationStatus()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+    }
+    
+    func authorizationStatus() {
+        switch locationManager.authorizationStatus {
+        case .denied, .restricted:
+            showAlert = true
+        case .authorizedAlways, .authorizedWhenInUse, .authorized:
+            showAlert = false
+        case .notDetermined:
+            showAlert = nil
+        @unknown default:
+            print("new value")
+        }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

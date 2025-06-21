@@ -16,27 +16,41 @@ final class MainViewModel: ObservableObject {
     @Published var cityForecast: Forecast? = nil
     
     @Published var searchText: String = ""
-    //@Published var showScreen: Bool = false
+    @Published var showAlert: Bool = false
     
     private var forecastManager = ForecastManager()
     private var cancellables: Set<AnyCancellable> = []
     
+    private let path = FileManager.cacheDirectory.appending(path: "previousForecast")
+    
     init() {
+        checkPermission()
+        currentLocationForecast = try? LocalFileManager.retrieveFromFileManager(path: path, type: Forecast.self)
         getForecast()
         getCityForecastSubscriber()
     }
     
-    func reloadData() {
-        forecastManager.getForecast()
+    private func checkPermission() {
+        forecastManager.$showAlert
+            .sink { [weak self] newValue in
+                if let newValue = newValue {
+                    self?.showAlert = newValue
+                } else {
+                    self?.showAlert = false
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func getForecast() {
         forecastManager.$currentForecast
             .sink(receiveValue: { [weak self] forecast in
-                self?.currentLocationForecast = forecast
-//                if forecast?.city.name != "Globe" {
-//                    self?.showScreen = true
-//                }
+                guard let self = self else { return }
+                
+                if let forecast = forecast {
+                    self.currentLocationForecast = forecast
+                    LocalFileManager.saveToFileManager(data: forecast, path: self.path)
+                }
             })
             .store(in: &cancellables)
     }

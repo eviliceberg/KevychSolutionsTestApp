@@ -16,9 +16,6 @@ struct RootView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                //                if !vm.showScreen {
-                //                    SplashScreen()
-                //                } else {
                 MainView(currentLocationForecast: vm.currentLocationForecast)
                     .onTapGesture {
                         focus = false
@@ -39,6 +36,7 @@ struct RootView: View {
                                         .onTapGesture {
                                             vm.handleSearch {
                                                 segue.toggle()
+                                                vm.searchText = ""
                                             }
                                         }
                                 }
@@ -46,12 +44,22 @@ struct RootView: View {
                         .padding(.horizontal, 16)
                         .padding(.bottom, 12)
                     })
-                //                }
+            }
+            .alert("“App Name” need access to\nuse Location",
+                   isPresented: $vm.showAlert) {
+                Button("Cancel") { }
+                Button("Settings", role: .cancel) {
+                    if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(settingsURL)
+                    }
+                }
+                
+            } message: {
+                Text("To get your current forecast, we need\naccess to Location in your iPhone\nSettings.")
             }
             .navigationDestination(isPresented: $segue, destination: {
                 MainView(currentLocationForecast: vm.cityForecast, isMainView: false)
             })
-            // .animation(.spring, value: vm.showScreen)
             .environmentObject(vm)
             .toolbarVisibility(.hidden, for: .navigationBar)
         }

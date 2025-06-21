@@ -11,28 +11,37 @@ struct InfoCell: View {
     
     let label: String?
     var makeInfoIntoDegrees: Bool = false
-    let info: String
+    let info: String?
     let systemImage: String?
+    var isImageOnTop: Bool = false
     
     var body: some View {
-        VStack(spacing: 12) {
-            
-            if let systemImage = systemImage {
-                Image(systemName: systemImage)
-                    .symbolRenderingMode(.multicolor)
+        HStack {
+            if let name = systemImage, !isImageOnTop {
+                Image(systemName: name)
             }
-            VStack {
-                if let label = label {
-                    Text(label)
-                        .fontWeight(.bold)
+
+            VStack(spacing: 6) {
+                
+                if let name = systemImage, isImageOnTop {
+                    Image(systemName: name)
                 }
                 
-                Text(info + (makeInfoIntoDegrees ? " °C" : ""))
+                VStack {
+                    if let label = label {
+                        Text(label)
+                            .fontWeight(.bold)
+                    }
+                    if let info = info {
+                        Text(info + (makeInfoIntoDegrees ? " °C" : ""))
+                    }
+                }
             }
         }
         .foregroundStyle(.white)
         .font(.headline)
         .padding()
+        .frame(maxWidth: .infinity)
         .background(.ultraThinMaterial)
         .clipShape(.rect(cornerRadius: 12))
     }
